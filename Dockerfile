@@ -1,7 +1,5 @@
 FROM python:3.10-slim
 
-# --- install system dependencies ---
-RUN apt-get update && apt-get install -y curl gnupg build-essential
 
 # --- install Node.js and npm ---
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
