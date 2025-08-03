@@ -12,10 +12,20 @@ jobs:
     steps:
     - name: Debug secret presence
       run: |
+        echo "Checking required secrets..."
+        
         if [ -z "${{ secrets.SERVER_IP }}" ]; then
           echo "❌ SERVER_IP is NOT set"
+          exit 1
         else
           echo "✅ SERVER_IP is set"
+        fi
+
+        if [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
+          echo "❌ SSH_PRIVATE_KEY is NOT set"
+          exit 1
+        else
+          echo "✅ SSH_PRIVATE_KEY is set"
         fi
 
     - name: Set up SSH key
