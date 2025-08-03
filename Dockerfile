@@ -11,8 +11,9 @@ COPY . /app/
 
 # Install the application dependencies.
 WORKDIR /app
-RUN uv sync  
 
+RUN uv venv
+RUN uv sync  
 
 # Run the application.
 CMD ["streamlit", "run", "app.py","--port", "8021", "--host", "0.0.0.0"]
