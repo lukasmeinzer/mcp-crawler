@@ -1,6 +1,7 @@
 import streamlit as st
 import asyncio
-from firebase_agent import run_agent 
+from firebase_agent import run_agent
+import traceback 
 
 st.set_page_config(page_title="scrapy ai", layout="wide")
 
@@ -35,6 +36,7 @@ if user_prompt:
             result = await run_agent(user_prompt)
             return result
         except Exception as e:
+            traceback.print_exc()  # prints full traceback to stderr
             return f"Error: {e}"
 
     # Run the async function and get the result
