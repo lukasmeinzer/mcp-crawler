@@ -1,27 +1,40 @@
 FROM python:3.10-slim
 
-
-# --- install Node.js and npm ---
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs && \
-    npm install -g npx
-
 WORKDIR /app
 
-# Install uv.
+# -------------------------------
+# Install system dependencies
+# -------------------------------
+RUN apt-get update && apt-get install -y \
+    gnupg \
+    ca-certificates \
+    curl \
+    build-essential \
+    wget
+
+# -------------------------------
+# Install Node.js and npm (LTS)
+# -------------------------------
+RUN wget -qO- https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs
+
+# Confirm versions (for debugging)
+RUN node -v && npm -v && npx --version
+
+# -------------------------------
+# Install uv
+# -------------------------------
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
+# -------------------------------
+# Copy project files
+# -------------------------------
 COPY pyproject.toml uv.lock /app/
+RUN uv sync
 
-# Copy the application into the container.
 COPY . /app/
 
-# Install the application dependencies.
-WORKDIR /app
-RUN uv sync  
-
-# Expose the port the app runs on
+# -------------------------------
+# Expose port 
+# -------------------------------
 EXPOSE 8021
-
-# Run the application.
-# CMD ["uv", "run", "streamlit", "run", "app.py", "--port", "8021", "--host", "0.0.0.0"]
