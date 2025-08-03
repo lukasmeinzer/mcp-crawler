@@ -7,5 +7,3 @@ services:
     restart: unless-stopped
     ports:
       - "4567:8021"
-    volumes:
-      - .:/app

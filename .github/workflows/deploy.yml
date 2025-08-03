@@ -1,4 +1,4 @@
-name: CI/CD Streamlit Deployment
+name: Deploy mcp-crawler
 
 on:
   push:
@@ -10,47 +10,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Debug secret presence
-      run: |
-        echo "Checking required secrets..."
-        
-        if [ -z "${{ secrets.SERVER_IP }}" ]; then
-          echo "❌ SERVER_IP is NOT set"
-          exit 1
-        else
-          echo "✅ SERVER_IP is set"
-          echo "${{ secrets.SERVER_IP }}"
-        fi
-
-        if [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
-          echo "❌ SSH_PRIVATE_KEY is NOT set"
-          exit 1
-        else
-          echo "✅ SSH_PRIVATE_KEY is set"
-        fi
-
     - name: Set up SSH key
       run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
+        mkdir -p ~/.ssh                
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa 
+        chmod 600 ~/.ssh/id_rsa       
         ssh-keyscan -H "${{ secrets.SERVER_IP }}" >> ~/.ssh/known_hosts
 
     - name: Build and Run Docker Container
       run: |
-        echo "Starting SSH session to remote server..."
-        ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} << 'EOF'
-          echo "Changing directory to git_local/mcp-crawler"
-          cd git_local/mcp-crawler || exit 1
-          
-          echo "Pulling latest changes..."
-          git pull || exit 1
-          
-          echo "Stopping running containers (if any)..."
+        ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} << EOF
+          cd git_local/mcp-crawler
+          git pull
           docker compose down || true
-          
-          echo "Building and starting containers..."
-          docker compose up -d --build || exit 1
-          
-          echo "Deployment finished successfully."
+          docker compose up -d --build
         EOF
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
