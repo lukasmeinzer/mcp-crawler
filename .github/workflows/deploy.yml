@@ -38,9 +38,19 @@ jobs:
 
     - name: Build and Run Docker Container
       run: |
+        echo "Starting SSH session to remote server..."
         ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} << 'EOF'
-          cd git_local/mcp-crawler
-          git pull
+          echo "Changing directory to git_local/mcp-crawler"
+          cd git_local/mcp-crawler || exit 1
+          
+          echo "Pulling latest changes..."
+          git pull || exit 1
+          
+          echo "Stopping running containers (if any)..."
           docker compose down || true
-          docker compose up -d --build
+          
+          echo "Building and starting containers..."
+          docker compose up -d --build || exit 1
+          
+          echo "Deployment finished successfully."
         EOF
