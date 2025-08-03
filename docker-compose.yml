@@ -1,0 +1,9 @@
+services:
+  mcp-crawler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mcp-crawler
+    restart: unless-stopped
+    ports:
+      - "4567:8021"

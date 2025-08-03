@@ -1,0 +1,35 @@
+name: CI/CD Streamlit Deployment
+
+on:
+  push:
+    branches:
+      - main  # or 'master' or your deploy branch
+
+jobs:
+  deploy:
+    name: Build & Deploy Streamlit App
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Copy project to server
+        run: |
+          rsync -az -e "ssh -p ${{ secrets.SSH_PORT || 22 }}" . ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:~/streamlit-app
+
+      - name: Deploy via Docker Compose
+        run: |
+          ssh -p ${{ secrets.SSH_PORT || 22 }} ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
+            cd ~/app
+            docker compose pull || true
+            docker compose build
+            docker compose up -d --remove-orphans
+          EOF

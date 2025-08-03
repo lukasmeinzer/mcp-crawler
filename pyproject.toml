@@ -1,0 +1,14 @@
+[project]
+name = "mcp-crawler"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "dotenv>=0.9.9",
+    "langchain-mcp-adapters>=0.1.9",
+    "langchain-openai>=0.3.28",
+    "langgraph>=0.6.2",
+    "mcp>=1.12.3",
+    "streamlit>=1.47.1",
+]
