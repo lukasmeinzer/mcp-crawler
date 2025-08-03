@@ -18,4 +18,4 @@ RUN uv sync
 EXPOSE 8021
 
 # Run the application.
-CMD ["uv", "run", "streamlit", "app.py", "--port", "8021", "--host", "0.0.0.0"]
+CMD ["uv", "run", "streamlit", "run", "app.py", "--port", "8021", "--host", "0.0.0.0"]
