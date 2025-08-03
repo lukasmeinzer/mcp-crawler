@@ -15,4 +15,4 @@ RUN uv sync
 
 
 # Run the application.
-CMD ["steamlit", "run", "app.py","--port", "8021", "--host", "0.0.0.0"]
+CMD ["streamlit", "run", "app.py","--port", "8021", "--host", "0.0.0.0"]
