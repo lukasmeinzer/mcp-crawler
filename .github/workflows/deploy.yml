@@ -39,7 +39,7 @@ jobs:
     - name: Build and Run Docker Container
       run: |
         ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} << 'EOF'
-          cd git_local/djk_kalender
+          cd git_local/mcp-crawler
           git pull
           docker compose down || true
           docker compose up -d --build
